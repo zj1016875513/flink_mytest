@@ -28,7 +28,8 @@ public class Hbase_sink extends RichSinkFunction<String> {
 
     private transient Connection connection;
     private transient Long lastInvokeTime;
-    private transient List<Put> putsList = new ArrayList<>(maxSize);
+    private transient List<Put> putsList = new ArrayList<>();
+//    private transient List<Put> putsList = new ArrayList<>(maxSize);
 
     // 创建连接
     @Override
@@ -75,23 +76,22 @@ public class Hbase_sink extends RichSinkFunction<String> {
         put.addColumn("info".getBytes(), "Topicindex".getBytes(), Topicindex.getBytes());
         put.addColumn("info".getBytes(), "intoTime".getBytes(), intoTime.getBytes());
 
-        putsList.add(put);// 添加put对象到list集合
+        Table newssink = connection.getTable(TableName.valueOf("flink:newssink"));
+        newssink.put(put);
+        newssink.close();
 
-        //使用ProcessingTime
-        long currentTime = System.currentTimeMillis();
-
-        //开始批次提交数据
-        if (putsList.size() == maxSize || currentTime - lastInvokeTime >= delayTime) {
-
-            //获取一个Hbase表
-            Table table = connection.getTable(TableName.valueOf("flink:newssink"));
-            table.put(putsList);//批次提交
-
-            putsList.clear();
-
-            lastInvokeTime = currentTime;
-            table.close();
-        }
+//        putsList.add(put);// 添加put对象到list集合
+//        //使用ProcessingTime
+//        long currentTime = System.currentTimeMillis();
+//        //开始批次提交数据
+//        if (putsList.size() == maxSize || currentTime - lastInvokeTime >= delayTime) {
+//            //获取一个Hbase表
+//            Table table = connection.getTable(TableName.valueOf("flink:newssink"));
+//            table.put(putsList);//批次提交
+//            putsList.clear();
+//            lastInvokeTime = currentTime;
+//            table.close();
+//        }
     }
 
     @Override
