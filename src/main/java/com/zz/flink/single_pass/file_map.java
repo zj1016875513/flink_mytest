@@ -39,7 +39,7 @@ public class file_map implements MapFunction<String,String>, CheckpointedFunctio
             news = new News(url, lt, rt, pt, uuid, topicIndex, intoTime);
             ArrayList<News> newsList = new ArrayList<>();
             newsList.add(news);
-             newsTopic = new NewsTopic(topicIndex, newsList);
+             newsTopic = new NewsTopic(topicIndex,intoTime,intoTime,newsList);
             list.add(newsTopic);
         }else {
             Tuple2<String, Double> res = getMaxsimilaryAndIndex(list, rt);
@@ -49,6 +49,7 @@ public class file_map implements MapFunction<String,String>, CheckpointedFunctio
                 for (NewsTopic newsTopic1 : list) {
                     if (news.getTopicindex().equals(newsTopic1.getTopicIndex())) {
                         newsTopic1.getNewsList().add(news);
+                        newsTopic1.setEnd_update(intoTime);
                         newsTopic=newsTopic1;
                         break;
                     }
@@ -58,12 +59,13 @@ public class file_map implements MapFunction<String,String>, CheckpointedFunctio
                 news = new News(url, lt, rt, pt, uuid, topicIndex, intoTime);
                 ArrayList<News> newsList = new ArrayList<>();
                 newsList.add(news);
-                 newsTopic = new NewsTopic(topicIndex, newsList);
+                 newsTopic = new NewsTopic(topicIndex,intoTime,intoTime,newsList);
                 list.add(newsTopic);
             }
         }
 
-       return JSON.toJSONString(newsTopic);
+       return JSON.toJSONString(news);  //一条新闻写出一条
+//       return JSON.toJSONString(newsTopic); //这样写出会导致主题保存多次
 
     }
 

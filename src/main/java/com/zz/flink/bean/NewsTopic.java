@@ -11,5 +11,7 @@ import java.util.ArrayList;
 @NoArgsConstructor
 public class NewsTopic {
     private String topicIndex;
+    private String first_update;
+    private String end_update;
     private ArrayList<News> newsList;
 }

@@ -37,7 +37,8 @@ public class flink_file {
                 .map(new file_map());
 
         stream.print();
-        stream.addSink(Flink_File_Sink.getFileSink());
+//        stream.addSink(Flink_File_Sink.getFileSink());
+        stream.addSink(new Hbase_sink());
 
 
         try {
