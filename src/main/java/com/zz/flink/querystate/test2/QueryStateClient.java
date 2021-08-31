@@ -8,7 +8,10 @@ import org.apache.flink.api.common.typeinfo.TypeHint;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.queryablestate.client.QueryableStateClient;
+
+import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author ：caizhengjie
@@ -23,15 +26,27 @@ public class QueryStateClient {
         ValueStateDescriptor<Tuple2<String,Long>> descriptor =
                 new ValueStateDescriptor<Tuple2<String, Long>>
                         ("keycount",
-                                TypeInformation.of(new TypeHint<Tuple2<String, Long>>() {
-                                }));
+                                TypeInformation.of(new TypeHint<Tuple2<String, Long>>() {}));
 
         CompletableFuture<ValueState<Tuple2<String, Long>>> resultFuture =
-                client.getKvState(JobID.fromHexString("99b6106e5a830bfd177ab380ce9c0110"),
+                client.getKvState(JobID.fromHexString("75c2be064e887796eef7fdaa26b0d715"),
                         "query-name",
                         "a",
                         BasicTypeInfo.STRING_TYPE_INFO,
                         descriptor);
+
+//        ValueState<Tuple2<String, Long>> res = resultFuture.join();
+//        System.out.println(res.value().f1);
+
+        resultFuture.thenAccept(response->{
+            try {
+                Tuple2<String, Long> res = response.value();
+                System.out.println(res.f0);
+                System.out.println(res.f1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
 //        resultFuture.thenAccept(response -> {
 //            try {
@@ -42,9 +57,9 @@ public class QueryStateClient {
 //            }
 //        });
 //
-//        resultFuture.get(5, TimeUnit.SECONDS);
+        resultFuture.get(5, TimeUnit.SECONDS);
 
-        System.out.println(resultFuture.get().value());
+//        System.out.println(resultFuture.get().value());
 
     }
 }

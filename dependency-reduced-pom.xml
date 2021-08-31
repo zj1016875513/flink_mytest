@@ -319,10 +319,6 @@
           <groupId>org.codehaus.jackson</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>junit</artifactId>
-          <groupId>junit</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>snappy</artifactId>
           <groupId>org.iq80.snappy</groupId>
         </exclusion>

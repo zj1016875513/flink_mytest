@@ -33,12 +33,14 @@ public class flink_file {
             .enableExternalizedCheckpoints(CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
 
         SingleOutputStreamOperator<String> stream = env.addSource(new file_source())
-                .filter(x -> x.split("\t").length == 4)//是否还需要过滤url相同的？
+                .filter(x -> x.split("\t").length == 4)//是否还需要过滤url相同的？需要，这个可以在后面输出之前再过滤一次
+                .keyBy(x->x.split("\t")[1])
+
                 .map(new file_map());
 
         stream.print();
-//        stream.addSink(Flink_File_Sink.getFileSink());
-        stream.addSink(new Hbase_sink());
+        stream.addSink(Flink_File_Sink.getFileSink());
+//        stream.addSink(new Hbase_sink());
 
 
         try {
