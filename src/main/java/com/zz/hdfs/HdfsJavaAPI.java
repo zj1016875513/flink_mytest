@@ -136,6 +136,7 @@ public class HdfsJavaAPI {
         fileSystem.close();
     }
 
+    //https://www.cnblogs.com/qlqwjy/p/7275874.html
     @Test
     public void listToFile() throws IOException {
         String aa ="\"Angelababy和橙子见面时哭了\\n\" +\n" +
@@ -190,12 +191,10 @@ public class HdfsJavaAPI {
         list.add("12345");
         list.add("678910");
         list.add("abcde");
-        StringBuffer sb = new StringBuffer(aa);
-        StringBuffer append = sb.append(sb)
-                .append(sb).append(sb).append(sb).append(sb).append(sb).append(sb).append(sb).append(sb).append(sb).append(sb)
-                .append(sb).append(sb).append(sb).append(sb).append(sb).append(sb).append(sb).append(sb).append(sb)
-                .append(sb).append(sb).append(sb).append(sb).append(sb).append(sb).append(sb).append(sb).append(sb)
+        StringBuilder sb = new StringBuilder(aa);
+        StringBuilder append = sb.append(sb)
                 .append(sb).append(sb).append(sb).append(sb).append(sb).append(sb).append(sb).append(sb).append(sb);
+
         list.add(append.toString());
         for (String s : list) {
             System.out.println(s);
