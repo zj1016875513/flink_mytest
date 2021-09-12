@@ -87,13 +87,19 @@ public class flinkSlide {
                     String endPt = sdf.format(end);
                     int num = list.size();
 
+                    //状态和集合最大的区别在于 状态是一直持续的，而集合只在本窗口中有效
+                    HashMap<String, Integer> hashMap = new HashMap<>();
+                    hashMap.put(startPt+"->"+endPt+";key="+s,num);
+
                     mapstate.put(startPt+"->"+endPt+";key="+s,num);
-                    for (Map.Entry<String, Integer> entry : mapstate.entries()) {
+
+                    for (Map.Entry<String, Integer> entry : hashMap.entrySet()) {
                         String key = entry.getKey();
                         Integer value = entry.getValue();
                         String mapOut = "key= "+key+" -> "+"value= "+value;
                         System.out.println(mapOut);
                     }
+
                     out.collect("w_start= "+startPt+"; "
                                     +"w_end= "+endPt+"; "
                                     +"key= "+s+"; "
