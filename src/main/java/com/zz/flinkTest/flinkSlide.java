@@ -23,6 +23,10 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 滑动窗口 map集合  map状态
+ */
+
 public class flinkSlide {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();

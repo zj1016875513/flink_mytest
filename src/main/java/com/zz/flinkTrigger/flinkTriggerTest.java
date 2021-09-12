@@ -23,6 +23,8 @@ import java.util.concurrent.TimeUnit;
 trigger 测试
 滚动窗口，20s
 然后是trigger内部技术，10个元素输出一次。
+没有keyby的时候开窗是 windowall
+
 https://www.jianshu.com/p/df363876e942
 */
 public class flinkTriggerTest {
