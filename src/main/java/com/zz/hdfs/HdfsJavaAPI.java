@@ -201,6 +201,7 @@ public class HdfsJavaAPI {
             System.out.println(s.length());
         }
         FileSystem fileSystem = getFileSystem();
+
         FSDataOutputStream fos = fileSystem.create(new Path("hdfs://hadoop162:8020/javaApi/test2/123.txt"));
 //        new BufferedWriter(fos);
         for (String s : list) {
