@@ -8,6 +8,7 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class HdfsJavaAPI {
 
@@ -40,7 +41,7 @@ public class HdfsJavaAPI {
      */
     public FileSystem getFileSystem() throws IOException {
         Configuration configuration = new Configuration();
-        configuration.set("fs.defaultFS", "hdfs://hadoop162:8020");
+        configuration.set("fs.defaultFS", "hdfs://hadoop102:9820");
         System.setProperty("HADOOP_USER_NAME","atguigu");
         FileSystem fileSystem = FileSystem.get(configuration);
         return fileSystem;
@@ -50,6 +51,62 @@ public class HdfsJavaAPI {
      * 创建文件夹
      * @throws IOException
      */
+    @Test
+    public void mkdir() throws IOException {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("123");
+        list.add("456");
+        list.add("789");
+        FileSystem hdfs = getFileSystem();
+        hdfs.mkdirs(new Path("/mkdir_test"));
+
+        for (int i = 0; i < 20; i++) {
+            String path = "/mkdir_test/"+i+".txt";
+            hdfs.createFile(new Path(path)).build();
+        }
+        for (int i = 20; i < 40; i++) {
+            String path = "/mkdir_test/"+i+".txt";
+            FSDataOutputStream fos = hdfs.append(new Path(path));
+            BufferedWriter bf = new BufferedWriter(new OutputStreamWriter(fos));
+            for (String ele : list) {
+                bf.write(ele);
+                bf.newLine();
+            }
+            bf.flush();
+            bf.close();
+        }
+    }
+
+    @Test
+    public void getfile() throws IOException {
+        FileSystem hdfs = getFileSystem();
+        RemoteIterator<LocatedFileStatus> iterator = hdfs.listFiles(new Path("/mkdir_test"), true);
+        ArrayList<String> rmList = new ArrayList<>();
+        while (iterator.hasNext()) {
+            LocatedFileStatus next = iterator.next();
+//            System.out.println(next);
+//            System.out.println(next.getPath().toString());
+            String filePath = next.getPath().toString();
+            String[] split = filePath.split(".txt")[0].split("/");
+            String file_num = split[split.length - 1];
+            int parseInt = Integer.parseInt(file_num);
+            if (parseInt<=10) {
+                rmList.add(filePath);
+            }
+        }
+        //System.out.println(rmList);
+        for (String ele : rmList) {
+            hdfs.delete(new Path(ele),true);
+        }
+
+        RemoteIterator<LocatedFileStatus> res = hdfs.listFiles(new Path("/mkdir_test"), true);
+        while (res.hasNext()) {
+            LocatedFileStatus next = res.next();
+            System.out.println(next.getPath().toString());
+        }
+
+    }
+
     @Test
     public void mkdirToHdfs() throws IOException {
         FileSystem fileSystem = getFileSystem();
@@ -62,6 +119,47 @@ public class HdfsJavaAPI {
         }
         fileSystem.close();
     }
+
+    @Test
+    public void fileList(){
+        File file = new File("src/main/java/com/zz/hdfs/filelisttest");
+        File[] files = file.listFiles();
+        for (File ele : files) {
+            String name = ele.getName();
+            if (ele.isDirectory()) {
+                File[] files1 = ele.listFiles();
+                for (File ele1 : files1) {
+                    System.out.println("dir:"+ele1.getAbsolutePath());
+                }
+            }
+            if (ele.isFile()) {
+                System.out.println("file:"+name);
+            }
+        }
+    }
+
+    @Test
+    public void createFile() throws IOException {
+//        File file = new File("src/main/java/com/zz/hdfs/filelisttest");
+        String[] arr1 = {"a","b","c"};
+        String[] arr2 = {"a1.txt","b1.txt","c1.txt"};
+        ArrayList<String> list1 = new ArrayList<>(Arrays.asList(arr1));
+        ArrayList<String> list2 = new ArrayList<>(Arrays.asList(arr2));
+        for (int i =0 ; i<list1.size();i++) {
+            String path = "src/main/java/com/zz/hdfs/filelisttest/" + list1.get(i);
+            File file = new File(path);
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+            String path2 = "src/main/java/com/zz/hdfs/filelisttest/"+list1.get(i)+"/"+list2.get(i);
+            File file2 = new File(path2);
+            if (!file2.exists()) {
+                file2.createNewFile();
+            }
+        }
+
+    }
+
 
     /**
      * 文件上传
@@ -92,7 +190,7 @@ public class HdfsJavaAPI {
      */
     public void deleteFile() throws IOException {
         FileSystem fileSystem = getFileSystem();
-        fileSystem.delete(new Path("hdfs://node01:8020/xsluo/b.txt"),true);
+        fileSystem.delete(new Path("hdfs://node01:8020/xsluo/b.txt"),true); //recursive 递归删除
         fileSystem.close();
     }
 

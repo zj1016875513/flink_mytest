@@ -41,6 +41,7 @@ public class flinkSlide {
                 });
 
 
+        env.readTextFile("src/main/java/com/zz/flinkTest/flinkTest1.txt");
 
         env.addSource(new source1())
             .keyBy(x->x.split(",")[0])
