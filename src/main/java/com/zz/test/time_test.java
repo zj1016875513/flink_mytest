@@ -14,6 +14,7 @@ import java.util.TimeZone;
 public class time_test {
 
     //java 新 api
+//    http://www.zzvips.com/article/73171.html
     @Test
     public void t1(){
         LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(System.currentTimeMillis()), ZoneId.of("Asia/Shanghai"));
